@@ -75,6 +75,7 @@ def quakes():
 
 
 def run_program(point_lat, point_lon, eq_dates, eq_lats, eq_lons, eq_depths, eq_mags, eq_moments, eq_strikes1, eq_dips1, eq_rakes1, eq_strikes2, eq_dips2, eq_rakes2):
+  python_path = os.path.expanduser("~/.venvs/okada/bin/python")
   mu = 4e+10
   dinsm2Nsm = 1e-5
   alpha = 2/3
@@ -162,7 +163,7 @@ def run_program(point_lat, point_lon, eq_dates, eq_lats, eq_lons, eq_depths, eq_
       print(f"Path to file: {exe_file_path}")
     else:
       print("File not found")
-    subprocess.call(["python", exe_file_path])
+    subprocess.call([python_path, exe_file_path])
 
     res = open("eq_stn_disp", "r")
     line = res.readline()
@@ -197,7 +198,7 @@ def run_program(point_lat, point_lon, eq_dates, eq_lats, eq_lons, eq_depths, eq_
       print(f"Path to file: {exe_file_path}")
     else:
       print("File not found")
-    subprocess.call(["python", exe_file_path])
+    subprocess.call([python_path, exe_file_path])
 
     res = open("eq_stn_disp", "r")
     line = res.readline()
@@ -303,9 +304,10 @@ if __name__ == "__main__":
   get_data(lat_s, lat_e, lon_s, lon_e, h)
 
   file_path_GAO = os.path.join(os.getcwd(), "GraphicsAfterOkada.py")
-  subprocess.call(["python", file_path_GAO, str(lat_s), str(lat_e), str(lon_s), str(lon_e), str(h)])
+  python_path = os.path.expanduser("~/.venvs/okada/bin/python")
+  subprocess.call([python_path, file_path_GAO, str(lat_s), str(lat_e), str(lon_s), str(lon_e), str(h)])
 
   subprocess.run(['rm', 'eq_params', 'eq_stn_disp'])
  
-  file_path_DBM = os.path.join(os.getcwd(), "DrawBeachballMap.py")
-  subprocess.call(["python", file_path_DBM, str(lat_s), str(lat_e), str(lon_s), str(lon_e), str(h)]) 
+  #file_path_DBM = os.path.join(os.getcwd(), "DrawBeachballMap.py")
+  #subprocess.call(["~/.venvs/okada/bin/python", file_path_DBM, str(lat_s), str(lat_e), str(lon_s), str(lon_e), str(h)]) 
