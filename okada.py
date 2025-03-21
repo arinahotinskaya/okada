@@ -37,5 +37,3 @@ success, u, grad_u = init.dc3dwrapper(alpha, xo, depth, dip, strike_width, dip_w
 # Write ux, uy, uz to the eq_stn_disp file
 with open("eq_stn_disp", "w") as f:
     f.write(f"{u[0]} {u[1]} {u[2]}\n")
-
-print(f"ux {u[0]}, uy {u[1]}, uz {u[2]}")
