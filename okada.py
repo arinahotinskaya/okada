@@ -5,10 +5,13 @@ import os
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "big", "okada_wrapper", "okada_wrapper"))
 sys.path.append(parent_dir)
 
-import init
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+import __init__
 
 # Reading parameters from eq_params
-with open("eq_params", "r") as f:
+eq_params_path = os.path.join(script_dir, "eq_params")
+with open(eq_params_path, "r") as f:
     first_x = float(f.readline())
     first_y = float(f.readline())
     first_z = float(f.readline())
@@ -32,8 +35,9 @@ dip_width = [eq_first_aw1, eq_first_aw2]
 dislocation = [eq_first_u1, eq_first_u2, eq_first_u3]
 
 # Calling the function
-success, u, grad_u = init.dc3dwrapper(alpha, xo, depth, dip, strike_width, dip_width, dislocation)
+success, u, grad_u = __init__.dc3dwrapper(alpha, xo, depth, dip, strike_width, dip_width, dislocation)
 
 # Write ux, uy, uz to the eq_stn_disp file
-with open("eq_stn_disp", "w") as f:
+output_path = os.path.join(script_dir, "eq_stn_disp")
+with open(output_path, "w") as f:
     f.write(f"{u[0]} {u[1]} {u[2]}\n")
