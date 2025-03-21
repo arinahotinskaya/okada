@@ -3,6 +3,7 @@ from datetime import datetime
 import os
 import subprocess
 import numpy as np
+from tqdm import tqdm
 
 
 def convert_date_to_decimal(year, month, day, hour, minute):
@@ -75,6 +76,7 @@ def quakes():
 
 
 def run_program(point_lat, point_lon, eq_dates, eq_lats, eq_lons, eq_depths, eq_mags, eq_moments, eq_strikes1, eq_dips1, eq_rakes1, eq_strikes2, eq_dips2, eq_rakes2):
+  
   python_path = os.path.expanduser("~/.venvs/okada/bin/python")
   mu = 4e+10
   dinsm2Nsm = 1e-5
@@ -218,24 +220,57 @@ def get_data(point_lat_start, point_lat_end, point_lon_start, point_lon_end, h):
   file = open("results.txt", "w")
   eq_dates, eq_lats, eq_lons, eq_depths, eq_mags, eq_moments, eq_strikes1, eq_dips1, eq_rakes1, eq_strikes2, eq_dips2, eq_rakes2 = quakes()
 
-  for i in range(len(eq_dates)):
-    ux_1, uy_1, uz_1, ux_2, uy_2, uz_2 = [], [], [], [], [], []
-    lat, lon = [], []
-    for point_lat in lat_arr:
-      for point_lon in lon_arr:
-        lat.append(point_lat), lon.append(point_lon)
-        ux1, uy1, uz1, ux2, uy2, uz2 = run_program(point_lat, point_lon, eq_dates[i], eq_lats[i], eq_lons[i], eq_depths[i], eq_mags[i], eq_moments[i], eq_strikes1[i], eq_dips1[i], eq_rakes1[i], eq_strikes2[i], eq_dips2[i], eq_rakes2[i])
-        ux_1.append(ux1), uy_1.append(uy1), uz_1.append(uz1), ux_2.append(ux2), uy_2.append(uy2), uz_2.append(uz2)
-    line1 = 'lat = {}\n'.format(lat)
-    line2 = 'lon = {}\n'.format(lon)
-    line3 = 'ux_1 = {}\n'.format(ux_1)
-    line4 = 'uy_1 = {}\n'.format(uy_1)
-    line5 = 'uz_1 = {}\n'.format(uz_1)
-    line6 = 'ux_2 = {}\n'.format(ux_2)
-    line7 = 'uy_2 = {}\n'.format(uy_2)
-    line8 = 'uz_2 = {}\n'.format(uz_2)
-    file.write(line1 + line2 + line3 + line4 + line5 + line6 + line7 + line8)
+  total_calls = len(eq_dates) * len(lat_arr) * len(lon_arr)
+  
+  with tqdm(total=total_calls) as pbar:
+        for i in range(len(eq_dates)):
+            ux_1, uy_1, uz_1, ux_2, uy_2, uz_2 = [], [], [], [], [], []
+            lat, lon = [], []
+            for point_lat in lat_arr:
+                for point_lon in lon_arr: 
+                    lat.append(point_lat)
+                    lon.append(point_lon)
+                    ux1, uy1, uz1, ux2, uy2, uz2 = run_program(point_lat, point_lon, eq_dates[i], eq_lats[i], eq_lons[i], eq_depths[i], eq_mags[i], eq_moments[i], eq_strikes1[i], eq_dips1[i], eq_rakes1[i], eq_strikes2[i], eq_dips2[i], eq_rakes2[i])
+                    ux_1.append(ux1)
+                    uy_1.append(uy1)
+                    uz_1.append(uz1)
+                    ux_2.append(ux2)
+                    uy_2.append(uy2)
+                    uz_2.append(uz2)
+
+                    # Progress-bar
+                    pbar.update(1)
+
+            line1 = 'lat = {}\n'.format(lat)
+            line2 = 'lon = {}\n'.format(lon)
+            line3 = 'ux_1 = {}\n'.format(ux_1)
+            line4 = 'uy_1 = {}\n'.format(uy_1)
+            line5 = 'uz_1 = {}\n'.format(uz_1)
+            line6 = 'ux_2 = {}\n'.format(ux_2)
+            line7 = 'uy_2 = {}\n'.format(uy_2)
+            line8 = 'uz_2 = {}\n'.format(uz_2)
+            file.write(line1 + line2 + line3 + line4 + line5 + line6 + line7 + line8)
+  
   file.close()
+
+  #for i in range(len(eq_dates)):
+  #  ux_1, uy_1, uz_1, ux_2, uy_2, uz_2 = [], [], [], [], [], []
+  #  lat, lon = [], []
+  #  for point_lat in lat_arr:
+  #    for point_lon in lon_arr:
+  #      lat.append(point_lat), lon.append(point_lon)
+  #      ux1, uy1, uz1, ux2, uy2, uz2 = run_program(point_lat, point_lon, eq_dates[i], eq_lats[i], eq_lons[i], eq_depths[i], eq_mags[i], eq_moments[i], eq_strikes1[i], eq_dips1[i], eq_rakes1[i], eq_strikes2[i], eq_dips2[i], eq_rakes2[i])
+  #      ux_1.append(ux1), uy_1.append(uy1), uz_1.append(uz1), ux_2.append(ux2), uy_2.append(uy2), uz_2.append(uz2)
+  #  line1 = 'lat = {}\n'.format(lat)
+  #  line2 = 'lon = {}\n'.format(lon)
+  #  line3 = 'ux_1 = {}\n'.format(ux_1)
+  #  line4 = 'uy_1 = {}\n'.format(uy_1)
+  #  line5 = 'uz_1 = {}\n'.format(uz_1)
+  #  line6 = 'ux_2 = {}\n'.format(ux_2)
+  #  line7 = 'uy_2 = {}\n'.format(uy_2)
+  #  line8 = 'uz_2 = {}\n'.format(uz_2)
+  #  file.write(line1 + line2 + line3 + line4 + line5 + line6 + line7 + line8)
+  #file.close()
 
 
 def parse_file(file_name):
